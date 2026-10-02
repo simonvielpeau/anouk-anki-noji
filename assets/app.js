@@ -95,7 +95,7 @@
   function resetFlow() {
     revokeMedia();
     S.source = { kind: 'none' }; S.notes = []; S.excluded = new Set(); S.deckName = ''; S.shown = 24; S.filter = ''; S.csv = null; S.course = null; S.built = null;
-    $('#filter').value = ''; $('#mapping').hidden = true; $('#paste-noji').value = ''; $('#cours-text').value = ''; $('#ai-reply').value = ''; $('#ai-hint').value = '';
+    $('#filter').value = ''; $('#mapping').hidden = true; $('#swap-row').hidden = true; $('#paste-noji').value = ''; $('#cours-text').value = ''; $('#ai-reply').value = ''; $('#ai-hint').value = '';
     say('msg-src', ''); say('msg-prev', '');
     updatePromptButton();
     renderAll();
@@ -164,8 +164,9 @@
   }
   function renderMapping() {
     const { parsed, mapping } = S.csv;
-    const show = mapping.columns > 2 || !mapping.hasHeader;
+    const show = mapping.columns > 2;
     $('#mapping').hidden = !show;
+    $('#swap-row').hidden = show;
     if (!show) return;
     const first = parsed.rows[0] || [];
     const label = (i) => `Colonne ${i + 1}${first[i] ? ' — ' + String(first[i]).slice(0, 28) : ''}`;
@@ -185,7 +186,7 @@
     S.deckName = baseName(name) || 'Mes fiches';
     const n = applyCsv();
     renderMapping();
-    say('msg-src', n ? `<b>${plural(n, 'fiche trouvée', 'fiches trouvées')}</b>.${$('#mapping').hidden ? '' : ' Si recto et verso sont inversés, change les colonnes ci-dessous.'}` : 'Aucune fiche trouvée : vérifie les colonnes ci-dessous.', n ? 'ok' : 'warn');
+    say('msg-src', n ? `<b>${plural(n, 'fiche trouvée', 'fiches trouvées')}</b>.${$('#mapping').hidden ? ' Si recto et verso sont inversés, touche « Inverser recto et verso ».' : ' Si recto et verso sont inversés, change les colonnes ci-dessous.'}` : 'Aucune fiche trouvée : vérifie les colonnes ci-dessous.', n ? 'ok' : 'warn');
   }
   async function onNojiFiles(files) {
     const f = files[0];
@@ -193,7 +194,7 @@
     if (['apkg', 'colpkg'].includes(ext)) { say('msg-src', "Ce fichier vient d'Anki : utilise plutôt « Anki → Noji » depuis l'accueil.", 'warn'); return; }
     say('msg-src', `Lecture de « ${esc(f.name)} »…`, 'pulse');
     try {
-      $('#mapping').hidden = true; S.csv = null;
+      $('#mapping').hidden = true; $('#swap-row').hidden = true; S.csv = null;
       const buf = await f.arrayBuffer();
       const head = new Uint8Array(buf.slice(0, 2));
       if (ext === 'ofc' || (head[0] === 0x50 && head[1] === 0x4b)) {
@@ -225,6 +226,12 @@
     say('msg-src', `<b>${plural(n, 'fiche', 'fiches')}</b> avec ces colonnes.`, n ? 'ok' : 'warn');
   }
   ['map-front', 'map-back', 'map-header'].forEach(id => $('#' + id).addEventListener('change', remap));
+  $('#btn-swap').addEventListener('click', () => {
+    if (!S.csv) return;
+    const m = S.csv.mapping; [m.front, m.back] = [m.back, m.front];
+    const n = applyCsv();
+    say('msg-src', `<b>${plural(n, 'fiche', 'fiches')}</b>, recto et verso inversés.`, 'ok');
+  });
 
   // ----- Cours -----
   const decodeXml = (s) => s.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&apos;/g, "'").replace(/&#(\d+);/g, (m, d) => String.fromCodePoint(+d)).replace(/&amp;/g, '&');
