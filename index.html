@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pont · Anki ⇄ Noji</title>
+<meta name="description" content="Passe tes fiches d'Anki à Noji et de Noji à Anki, ou fais-les rédiger à partir de ton cours. Tout se fait sur l'iPad.">
+<meta name="theme-color" content="#2449B8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#10141B" media="(prefers-color-scheme: dark)">
+<meta name="color-scheme" content="light dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Pont">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="stylesheet" href="assets/app.css">
+</head>
+<body>
+<a class="skip" href="#main">Aller au contenu</a>
+
+<header class="top" id="top">
+  <button class="back" id="btn-back" type="button" hidden aria-label="Retour à l'accueil">‹ Accueil</button>
+  <div class="brand" id="brand">
+    <span class="glyph" aria-hidden="true"><i></i><i></i></span>
+    <span class="brand-name">Pont</span>
+  </div>
+  <button class="gear" id="btn-settings" type="button" aria-label="Réglages">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+  </button>
+</header>
+
+<main id="main" class="main">
+
+  <!-- ===== Accueil ===== -->
+  <section class="screen" id="screen-home">
+    <div class="hero">
+      <h1>Tes fiches, d'une appli à l'autre.</h1>
+      <p class="lede">Choisis ce que tu veux faire. Tout se passe sur l'iPad, en trois étapes.</p>
+    </div>
+    <div class="tiles">
+      <button class="tile" type="button" data-flow="anki2noji">
+        <span class="tile-title">Anki <span class="arrow">→</span> Noji</span>
+        <span class="tile-sub">À partir d'un paquet exporté d'Anki (.apkg)</span>
+      </button>
+      <button class="tile" type="button" data-flow="noji2anki">
+        <span class="tile-title">Noji <span class="arrow">→</span> Anki</span>
+        <span class="tile-sub">À partir d'un export Noji (.ofc ou CSV)</span>
+      </button>
+      <button class="tile" type="button" data-flow="cours">
+        <span class="tile-title">Cours <span class="arrow">→</span> fiches</span>
+        <span class="tile-sub">L'IA rédige les fiches à partir de ton cours</span>
+      </button>
+    </div>
+    <p class="privacy">Tes fichiers ne quittent pas l'iPad : la conversion se fait dans cette page. Seule la création par IA envoie le cours au service que tu choisis.</p>
+    <div class="install" id="install-hint" hidden>
+      <b>Garde Pont sous la main :</b> dans Safari, touche <span class="ico">Partager</span> puis <b>Sur l'écran d'accueil</b>. Pont s'ouvrira comme une appli.
+      <button type="button" class="link" id="install-dismiss">Ne plus afficher</button>
+    </div>
+  </section>
+
+  <!-- ===== Flux ===== -->
+  <section class="screen" id="screen-flow" hidden>
+    <h1 class="flow-title" id="flow-title"></h1>
+
+    <!-- Étape 1 : source -->
+    <section class="step" id="step-source" aria-labelledby="h-source">
+      <div class="step-h"><span class="num">1</span><h2 id="h-source">Ton fichier</h2></div>
+
+      <div class="panel" data-flow="anki2noji">
+        <ol class="howto">
+          <li>Dans <b>Anki</b>, touche <b>Ajouter/Exporter</b> (en bas à gauche), puis <b>Exporter</b>.</li>
+          <li>Garde la progression et les médias cochés, puis <b>Enregistrer dans Fichiers</b>.</li>
+          <li>Choisis ce fichier ci-dessous.</li>
+        </ol>
+        <label class="drop" id="drop-anki">
+          <input type="file" id="file-anki" aria-label="Choisir un paquet Anki">
+          <span class="big">Choisir le paquet Anki</span>
+          <span class="small">.apkg ou .colpkg · depuis Fichiers</span>
+        </label>
+      </div>
+
+      <div class="panel" data-flow="noji2anki" hidden>
+        <ol class="howto">
+          <li>Dans <b>Noji</b>, ouvre le paquet → réglages → <b>Exporter le paquet</b>.</li>
+          <li>Choisis <b>OFC</b> pour garder les images (ou CSV pour le texte seul). Noji t'envoie un lien par e-mail : télécharge le fichier dans les 24 h.</li>
+          <li>Choisis ce fichier ci-dessous.</li>
+        </ol>
+        <label class="drop" id="drop-noji">
+          <input type="file" id="file-noji" aria-label="Choisir l'export Noji">
+          <span class="big">Choisir l'export Noji</span>
+          <span class="small">.ofc, .csv ou .txt · depuis Fichiers</span>
+        </label>
+        <details class="more"><summary>Ou colle des fiches (une par ligne)</summary>
+          <div class="panel">
+            <textarea id="paste-noji" placeholder="Recto&#9;Verso&#10;Capitale du Pérou ?&#9;Lima"></textarea>
+            <div class="row"><button class="btn small" id="btn-paste-noji" type="button">Utiliser ce texte</button></div>
+          </div>
+        </details>
+        <div class="opts" id="mapping" hidden>
+          <label class="field">Recto (question)<select id="map-front"></select></label>
+          <label class="field">Verso (réponse)<select id="map-back"></select></label>
+          <label class="check"><input type="checkbox" id="map-header"> <span>La première ligne contient les titres des colonnes</span></label>
+        </div>
+      </div>
+
+      <div class="panel" data-flow="cours" hidden>
+        <label class="drop" id="drop-cours">
+          <input type="file" id="file-cours" multiple aria-label="Choisir le cours">
+          <span class="big">Choisir le cours</span>
+          <span class="small">PDF, Word, PowerPoint, texte ou photos de tes notes · plusieurs fichiers possibles</span>
+        </label>
+        <details class="more" id="cours-paste"><summary>Ou colle le texte du cours</summary>
+          <textarea id="cours-text" placeholder="Colle ici le contenu du cours…"></textarea>
+        </details>
+        <div class="opts">
+          <fieldset><legend>Type de fiches</legend>
+            <div class="seg">
+              <label><input type="radio" name="ai-type" value="mix" checked><span>Les deux</span></label>
+              <label><input type="radio" name="ai-type" value="qa"><span>Questions / réponses</span></label>
+              <label><input type="radio" name="ai-type" value="cloze"><span>Textes à trous</span></label>
+            </div>
+          </fieldset>
+          <fieldset><legend>Quantité</legend>
+            <div class="seg">
+              <label><input type="radio" name="ai-qty" value="light"><span>L'essentiel</span></label>
+              <label><input type="radio" name="ai-qty" value="normal" checked><span>Normal</span></label>
+              <label><input type="radio" name="ai-qty" value="full"><span>Détaillé</span></label>
+            </div>
+          </fieldset>
+        </div>
+        <label class="field">Précisions (facultatif)
+          <input type="text" id="ai-hint" placeholder="Ex. : seulement le chapitre 2, niveau terminale, fiches en anglais…">
+        </label>
+
+        <!-- Mode avec clé -->
+        <div class="aimode" id="ai-key-mode" hidden>
+          <div class="row">
+            <button class="btn primary" id="btn-ai" type="button">Créer les fiches</button>
+            <button class="btn quiet" id="btn-ai-stop" type="button" hidden>Arrêter</button>
+            <span class="muted" id="ai-model-note"></span>
+          </div>
+          <div class="progress" id="ai-progress" hidden><div class="bar"><span id="ai-bar"></span></div></div>
+        </div>
+
+        <!-- Mode sans clé -->
+        <div class="aimode" id="ai-paste-mode">
+          <div class="twostep">
+            <div class="ts">
+              <span class="ts-n">A</span>
+              <div>
+                <p><b>Copie la consigne</b>, puis colle-la dans ton appli d'IA (Claude, ChatGPT…).</p>
+                <div class="row">
+                  <button class="btn primary" id="btn-copy-prompt" type="button" disabled>Copier la consigne</button>
+                  <a class="btn" href="https://claude.ai/new" target="_blank" rel="noopener">Ouvrir Claude</a>
+                  <a class="btn quiet" href="https://chatgpt.com/" target="_blank" rel="noopener">Ouvrir ChatGPT</a>
+                </div>
+                <p class="muted" id="prompt-note"></p>
+              </div>
+            </div>
+            <div class="ts">
+              <span class="ts-n">B</span>
+              <div>
+                <p><b>Colle sa réponse ici</b>, puis lis les fiches.</p>
+                <textarea id="ai-reply" placeholder="Colle ici la réponse de l'IA…"></textarea>
+                <div class="row"><button class="btn primary" id="btn-read-reply" type="button">Lire les fiches</button></div>
+              </div>
+            </div>
+          </div>
+          <p class="muted">Tu préfères que ça se fasse tout seul ? Ajoute une clé dans les <button type="button" class="link" data-open-settings>réglages</button>.</p>
+        </div>
+      </div>
+
+      <div class="msg" id="msg-src" role="status" aria-live="polite"></div>
+    </section>
+
+    <!-- Étape 2 : aperçu -->
+    <section class="step" id="step-preview" aria-labelledby="h-prev">
+      <div class="step-h"><span class="num">2</span><h2 id="h-prev">Vérifie tes fiches</h2></div>
+      <div class="summary" id="summary"><span class="muted">Les fiches apparaîtront ici.</span></div>
+      <div class="decks" id="decks" hidden></div>
+      <div class="tools">
+        <label class="field" id="deckname-field" hidden>Nom du paquet<input type="text" id="deck-name" autocomplete="off"></label>
+        <label class="field" id="filter-field" hidden>Rechercher<input type="search" id="filter" autocomplete="off" placeholder="Un mot du recto ou du verso"></label>
+      </div>
+      <div class="msg" id="msg-prev" role="status" aria-live="polite"></div>
+      <div class="grid" id="grid"></div>
+      <div class="more-row"><button class="btn quiet" id="btn-more" type="button" hidden></button></div>
+    </section>
+
+    <!-- Étape 3 : envoi -->
+    <section class="step" id="step-send" aria-labelledby="h-send">
+      <div class="step-h"><span class="num">3</span><h2 id="h-send">Envoie-les</h2></div>
+      <div class="dests">
+        <div class="dest" id="dest-anki">
+          <h3>Vers Anki</h3>
+          <p class="sub">Un paquet .apkg qu'Anki ouvre directement.</p>
+          <label class="check" id="progress-anki" hidden><input type="checkbox" class="keep-progress" checked> <span>Garder ma progression (intervalles et historique)</span></label>
+          <div class="row">
+            <button class="btn primary" id="btn-share-anki" type="button" hidden>Envoyer vers Anki</button>
+            <button class="btn" id="btn-dl-anki" type="button">Télécharger le paquet</button>
+          </div>
+          <div class="msg" id="msg-anki" role="status" aria-live="polite"></div>
+          <ol class="howto" id="howto-anki"></ol>
+        </div>
+        <div class="dest" id="dest-noji">
+          <h3>Vers Noji</h3>
+          <p class="sub" id="noji-sub">Le plus rapide : copie les fiches, puis colle-les dans Noji.</p>
+          <div class="row">
+            <button class="btn primary" id="btn-noji-copy" type="button">Copier les fiches</button>
+            <a class="btn" href="https://noji.io/" target="_blank" rel="noopener">Ouvrir noji.io</a>
+          </div>
+          <div class="msg" id="msg-noji" role="status" aria-live="polite"></div>
+          <div class="copybox" id="copybox" hidden>
+            <p class="muted">La copie automatique n'a pas marché : touche le texte, « Tout sélectionner », puis « Copier ».</p>
+            <textarea id="copytext" readonly aria-label="Fiches à copier"></textarea>
+          </div>
+          <ol class="howto">
+            <li>Sur <b>noji.io</b>, crée un nouveau paquet (ou ouvre-en un).</li>
+            <li>Touche <b>Import Cards</b>, puis colle dans le champ de texte.</li>
+            <li>Vérifie l'aperçu (séparateur : tabulation, une fiche par ligne), puis valide.</li>
+          </ol>
+          <details class="more" id="noji-more"><summary>Garder les images et la progression</summary>
+            <div class="panel">
+              <p class="muted">Le copier-coller ne garde que le texte. Ce fichier .apkg garde tout : sur noji.io, utilise l'import de paquet Anki et choisis-le dans Fichiers.</p>
+              <label class="check" id="progress-noji" hidden><input type="checkbox" class="keep-progress" checked> <span>Garder ma progression</span></label>
+              <div class="row">
+                <button class="btn small" id="btn-noji-apkg" type="button">Télécharger le .apkg pour Noji</button>
+                <button class="btn small quiet" id="btn-noji-csv" type="button">Télécharger un CSV</button>
+              </div>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <div class="flow-foot"><button class="btn quiet" id="btn-restart" type="button">Recommencer</button></div>
+  </section>
+</main>
+
+<!-- ===== Réglages ===== -->
+<div class="sheet-wrap" id="settings" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="h-settings">
+    <div class="sheet-h"><h2 id="h-settings">Réglages</h2><button class="x" id="settings-close" type="button" aria-label="Fermer">✕</button></div>
+
+    <section class="sheet-sec">
+      <h3>Création par IA</h3>
+      <p class="muted">Sans clé, Pont prépare une consigne à coller dans ton appli d'IA. Avec une clé, les fiches se créent directement ici (facturé à l'usage par le fournisseur, quelques centimes par cours).</p>
+      <label class="field">Clé API (Anthropic <code>sk-ant-…</code> ou OpenAI <code>sk-…</code>)
+        <input type="password" id="api-key" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Colle ta clé ici">
+      </label>
+      <div class="row">
+        <button class="btn primary" id="btn-key-save" type="button">Vérifier et enregistrer</button>
+        <button class="btn quiet" id="btn-key-clear" type="button">Effacer la clé</button>
+      </div>
+      <div class="msg" id="msg-key" role="status" aria-live="polite"></div>
+      <p class="muted">La clé est enregistrée uniquement sur cet appareil, dans ce navigateur.</p>
+    </section>
+
+    <section class="sheet-sec">
+      <h3>Pont sur l'écran d'accueil</h3>
+      <p class="muted">Dans Safari : <b>Partager</b> → <b>Sur l'écran d'accueil</b>. Pont s'ouvre alors comme une appli et fonctionne même sans connexion (sauf l'IA).</p>
+    </section>
+
+    <section class="sheet-sec">
+      <h3>À savoir</h3>
+      <ul class="muted plain">
+        <li>Les fiches à masquage d'image ne sont pas converties.</li>
+        <li>Noji n'exporte que les paquets que tu as créés toi-même.</li>
+        <li>Version <span id="version"></span></li>
+      </ul>
+    </section>
+  </div>
+</div>
+
+<script src="vendor/jszip.min.js"></script>
+<script src="vendor/fzstd.js"></script>
+<script src="vendor/sql-wasm.js"></script>
+<script src="assets/core.js"></script>
+<script src="assets/ai.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>
